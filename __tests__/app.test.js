@@ -6,9 +6,7 @@ const testData = require('../db/data/test-data')
 
 beforeEach(() => seed(testData))
 
-afterAll(() => {
-  if (db.end) db.end();
-});
+afterAll(() => db.end());
 
 describe("/api/topics", () => {
 	describe("GET", () => {
@@ -16,14 +14,16 @@ describe("/api/topics", () => {
 		return request(app)
             .get("/api/topics")
             .expect(200)
-            .then((response) => {
+            .then(response => {
+                console.log(response.body.topics)
+                expect(response.body.topics).not.toHaveLength(0)
                 response.body.topics.forEach(topic => {
                     expect(topic).toEqual(
                         expect.objectContaining({
                             description: expect.any(String),
                             slug: expect.any(String)
 						})
-					);
+                    );
 				});
 	        });
         });
