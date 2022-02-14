@@ -15,7 +15,6 @@ describe("/api/topics", () => {
             .get("/api/topics")
             .expect(200)
             .then(response => {
-                console.log(response.body.topics)
                 expect(response.body.topics).toHaveLength(3)
                 response.body.topics.forEach(topic => {
                     expect(topic).toEqual(
@@ -33,6 +32,46 @@ describe("/api/topics", () => {
             .expect(404)
             .then((response) => {
                 expect(response.body.msg).toBe('Path not found')
+	        });
+        });
+    })
+})
+
+describe("/api/articles/:article_id", () => {
+	describe("GET", () => {
+        test(`status: 200 returns an article object, which should have the following properties:
+            authors (which is the username for the users table), title, article_id, body, topic, created_at, votes`, () => {
+            return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+            .then(response => {
+                expect(response.body.article).toHaveLength(1)
+                expect(response.body.article).toEqual([{
+                            author: 'butter_bridge',
+                            title: 'Living in the shadow of a great man',
+                            article_id: 1,
+                            body: 'I find this existence challenging',
+                            topic: 'mitch',
+                            created_at: '2020-07-09T20:11:00.000Z',
+                            votes: 100
+						}])
+            });
+        });
+        test("status: 404 returns an error message of 404: path not found", () => {
+		return request(app)
+            .get("/api/article")
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe('Path not found')
+	        });
+        });
+        test("status: 400 returns an error message of 400: bad request", () => {
+		return request(app)
+            .get("/api/articles/g")
+            .expect(400)
+            .then((response) => {
+                console.log(response.body)
+                expect(response.body.msg).toBe('Bad Request')
 	        });
         });
     })
