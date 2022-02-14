@@ -1,6 +1,6 @@
 const {selectTopics, selectArticle} = require('../Models/models.js')
 
-exports.getTopics = (req, res) => {
+exports.getTopics = (req, res, next) => {
     selectTopics()
     .then(topics => {
         res.status(200).send({topics})
