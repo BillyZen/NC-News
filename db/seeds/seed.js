@@ -1,4 +1,6 @@
 const format = require("pg-format");
+
+
 const {
   convertTimestampToDate,
   createRef,
@@ -6,6 +8,7 @@ const {
 } = require("../helpers/utils");
 const db = require("../connection");
 const { dropTables, createTables } = require("../helpers/manage-tables");
+
 
 const seed = async ({ topicData, userData, articleData, commentData }) => {
   await dropTables();
