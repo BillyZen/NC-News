@@ -181,3 +181,36 @@ describe('/api/users', () => {
         });
     })
 })
+
+describe('/api/articles', () => {
+    describe('GET', () => {
+        test('Status 200: returns all articles in order of created_at data in descending order', () => {
+            return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(response => {
+                expect(response.body.articles).toHaveLength(12)
+                response.body.articles.forEach(article => {
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number)
+						})
+                    );
+				});
+	        });
+        })
+        test('Status 404 : returns error when articles is mispelled', () => {
+            return request(app)
+            .get("/api/articuls")
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe('Not found')
+	        });
+        })
+    })
+})
