@@ -24,7 +24,6 @@ exports.getArticle = (req, res, next) => {
 exports.updateArticleById = (req, res, next) => {
     const articleId = req.params.article_id
     const updatedVotes = req.body.inc_votes
-    console.log(updatedVotes)
     patchArticleById(articleId, updatedVotes)
     .then(updatedArticle => {
         res.status(200).send({updatedArticle})
