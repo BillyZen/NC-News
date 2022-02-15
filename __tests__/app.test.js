@@ -74,8 +74,8 @@ describe("/api/articles/:article_id", () => {
         });
     })
 
-    describe.only("PATCH", () => {
-        test('status 201: returns an updated article object which should take new information and update the correct record accordingly', () => {
+    describe("PATCH", () => {
+        test('status 200: returns an updated article object which should take new information and update the correct record accordingly', () => {
             const newVotes = { inc_votes : 10 }
             const articleToUpdate = {
                     article_id: 1,
