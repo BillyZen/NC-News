@@ -63,7 +63,7 @@ exports.selectUsers = () => {
 
 exports.selectArticles = () => {
     return db.query('SELECT * FROM articles ORDER BY created_at DESC;')
-    .then(data => {
-        return data.rows
+    .then(({rows}) => {
+        return rows
     })
 }

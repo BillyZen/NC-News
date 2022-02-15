@@ -171,14 +171,6 @@ describe('/api/users', () => {
 				});
 	        });
         });
-        test('Status 404 returned when mispelling of users api', () => {
-            return request(app)
-            .get("/api/usernames")
-            .expect(404)
-            .then((response) => {
-                expect(response.body.msg).toBe('Not found')
-	        });
-        });
     })
 })
 
@@ -202,14 +194,6 @@ describe('/api/articles', () => {
 						})
                     );
 				});
-	        });
-        })
-        test('Status 404 : returns error when articles is mispelled', () => {
-            return request(app)
-            .get("/api/articuls")
-            .expect(404)
-            .then((response) => {
-                expect(response.body.msg).toBe('Not found')
 	        });
         })
     })
