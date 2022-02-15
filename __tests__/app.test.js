@@ -75,7 +75,7 @@ describe("/api/articles/:article_id", () => {
     })
 
     describe("PATCH", () => {
-        test('status 200: returns an updated article object which should take new information and update the correct record accordingly', () => {
+        test('status 200: returns an updated article object that has the vote key incremented by the value of inc_votes in the request body when it is positive', () => {
             const newVotes = { inc_votes : 10 }
             const articleToUpdate = {
                     article_id: 1,
@@ -94,6 +94,28 @@ describe("/api/articles/:article_id", () => {
                 expect(response.body.updatedArticle).toEqual({
                     ...articleToUpdate,
                     votes: 110
+                })
+            })
+        })
+        test('status 200: returns an updated article object that has the vote key decremented by the value of inc_votes in the request body when it is negative', () => {
+            const newVotes = { inc_votes : -10 }
+            const articleToUpdate = {
+                    article_id: 1,
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: '2020-07-09T20:11:00.000Z'
+                }
+
+            return request(app)
+            .patch("/api/articles/1")
+            .send(newVotes)
+            .expect(200)
+            .then(response => {
+                expect(response.body.updatedArticle).toEqual({
+                    ...articleToUpdate,
+                    votes: 90
                 })
             })
         })
@@ -118,7 +140,8 @@ describe("/api/articles/:article_id", () => {
                 expect(response.body.msg).toBe('Bad Request')
             })
         })
-        test('status 400: bad request if format of req.body is not correct', () => {
+        test('status 400: bad request if format of inputted request body is not correct', () => {
+            // changed inc_votes to votes to cause formatting issue
             const newVotes = { votes : 10 }
             return request(app)
             .patch("/api/articles/1")
