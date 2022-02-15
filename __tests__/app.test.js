@@ -118,7 +118,7 @@ describe("/api/articles/:article_id", () => {
                 expect(response.body.msg).toBe('Bad Request')
             })
         })
-        test.only('status 400: bad request if format of req.body is not correct', () => {
+        test('status 400: bad request if format of req.body is not correct', () => {
             const newVotes = { votes : 10 }
             return request(app)
             .patch("/api/articles/1")
