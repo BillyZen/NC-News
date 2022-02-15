@@ -171,13 +171,30 @@ describe('/api/users', () => {
 				});
 	        });
         });
-        test('Status 404 returned when mispelling of users api', () => {
+    })
+})
+
+describe('/api/articles', () => {
+    describe('GET', () => {
+        test('Status 200: returns all articles in order of created_at data in descending order', () => {
             return request(app)
-            .get("/api/usernames")
-            .expect(404)
-            .then((response) => {
-                expect(response.body.msg).toBe('Not found')
+            .get("/api/articles")
+            .expect(200)
+            .then(response => {
+                expect(response.body.articles).toHaveLength(12)
+                response.body.articles.forEach(article => {
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number)
+						})
+                    );
+				});
 	        });
-        });
+        })
     })
 })
