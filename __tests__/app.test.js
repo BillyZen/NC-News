@@ -68,9 +68,55 @@ describe("/api/articles/:article_id", () => {
 		return request(app)
             .get("/api/articles/100")
             .expect(404)
-            .then((response) => {
+            .then(response => {
                 expect(response.body.msg).toBe('No article found for article_id: 100')
 	        });
         });
+    })
+
+    describe.only("PATCH", () => {
+        test('status 201: returns an updated article object which should take new information and update the correct record accordingly', () => {
+            const newVotes = { inc_votes : 10 }
+            const articleToUpdate = {
+                    article_id: 1,
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: '2020-07-09T20:11:00.000Z'
+                }
+
+            return request(app)
+            .patch("/api/articles/1")
+            .send(newVotes)
+            .expect(200)
+            .then(response => {
+                expect(response.body.updatedArticle).toEqual({
+                    ...articleToUpdate,
+                    votes: 110
+                })
+            })
+        })
+        test('status 404 if article isn\'t found', () => {
+
+            const newVotes = { inc_votes : 10 }
+            return request(app)
+            .patch("/api/articles/50")
+            .send(newVotes)
+            .expect(404)
+            .then(response => {
+                expect(response.body.msg).toBe('No article found for article_id: 50')
+            })
+        })
+        test('status 400: bad request if format is not correct', () => {
+            const newVotes = { inc_votes : 10 }
+            return request(app)
+            .patch("/api/articles/hello")
+            .send(newVotes)
+            .expect(400)
+            .then(response => {
+                expect(response.body.msg).toBe('Bad Request')
+            })
+        })
     })
 })

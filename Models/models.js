@@ -20,3 +20,27 @@ exports.selectArticle = (id) => {
         return article
     })
 }
+
+
+exports.patchArticleById = (id, votes) => {
+    return db.query('SELECT votes FROM articles WHERE article_id = $1;', [id])
+    .then(voteData => {
+        if(!voteData.rows[0]){
+            return Promise.reject({
+                status: 404,
+                msg : `No article found for article_id: ${id}`
+            })
+        } else {
+            const oldVotes = voteData.rows[0].votes
+            const newVotes = oldVotes + votes
+            return newVotes
+        }     
+    })
+    .then(newVotes => {
+        return db.query('UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *;', [newVotes, id])
+    })
+    .then(({rows}) => {
+        const article = rows[0]
+        return article
+    })
+}
