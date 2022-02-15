@@ -148,7 +148,7 @@ describe("/api/articles/:article_id", () => {
             .send(newVotes)
             .expect(400)
             .then(response => {
-                expect(response.body.msg).toBe('Bad Request')
+                expect(response.body.msg).toBe('Incorrect request body format')
             })
         })
     })

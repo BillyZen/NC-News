@@ -23,24 +23,32 @@ exports.selectArticle = (id) => {
 
 
 exports.patchArticleById = (id, votes) => {
-    return db.query('SELECT votes FROM articles WHERE article_id = $1;', [id])
-    .then(voteData => {
-        if(!voteData.rows[0]){
-            return Promise.reject({
-                status: 404,
-                msg : `No article found for article_id: ${id}`
+    console.log(votes)
+    if(!votes) {
+        return Promise.reject({
+                status: 400,
+                msg : 'Incorrect request body format'
             })
-        } else {
-            const oldVotes = voteData.rows[0].votes
-            const newVotes = oldVotes + votes
-            return newVotes
-        }     
-    })
-    .then(newVotes => {
-        return db.query('UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *;', [newVotes, id])
-    })
-    .then(({rows}) => {
-        const article = rows[0]
-        return article
-    })
+    } else {
+        return db.query('SELECT votes FROM articles WHERE article_id = $1;', [id])
+        .then(voteData => {
+            if(!voteData.rows[0]){
+                return Promise.reject({
+                    status: 404,
+                    msg : `No article found for article_id: ${id}`
+                })
+            } else {
+                const oldVotes = voteData.rows[0].votes
+                const newVotes = oldVotes + votes
+                return newVotes
+            }     
+        })
+        .then(newVotes => {
+            return db.query('UPDATE articles SET votes = $1 WHERE article_id = $2 RETURNING *;', [newVotes, id])
+        })
+        .then(({rows}) => {
+            const article = rows[0]
+            return article
+        })
+    }
 }
