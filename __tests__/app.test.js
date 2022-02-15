@@ -153,3 +153,31 @@ describe("/api/articles/:article_id", () => {
         })
     })
 })
+
+describe('/api/users', () => {
+    describe('GET', () => {
+        test('Status 200: responds with an array of objects which have the username property', () => {
+		return request(app)
+            .get("/api/users")
+            .expect(200)
+            .then(response => {
+                expect(response.body.users).toHaveLength(4)
+                response.body.users.forEach(user => {
+                    expect(user).toEqual(
+                        expect.objectContaining({
+                            username: expect.any(String)
+						})
+                    );
+				});
+	        });
+        });
+        test('Status 404 returned when mispelling of users api', () => {
+            return request(app)
+            .get("/api/usernames")
+            .expect(404)
+            .then((response) => {
+                expect(response.body.msg).toBe('Not found')
+	        });
+        });
+    })
+})

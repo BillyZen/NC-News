@@ -1,4 +1,4 @@
-const {selectTopics, selectArticle, patchArticleById} = require('../Models/models.js')
+const {selectTopics, selectArticle, patchArticleById, selectUsers} = require('../Models/models.js')
 
 exports.getTopics = (req, res, next) => {
     selectTopics()
@@ -27,6 +27,17 @@ exports.updateArticleById = (req, res, next) => {
     patchArticleById(articleId, updatedVotes)
     .then(updatedArticle => {
         res.status(200).send({updatedArticle})
+    })
+    .catch(err => {
+        next(err)
+    })
+}
+
+
+exports.getUsers = (req,res,next) => {
+    selectUsers()
+    .then(users => {
+        res.status(200).send({users})
     })
     .catch(err => {
         next(err)
