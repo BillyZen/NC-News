@@ -23,7 +23,6 @@ exports.selectArticle = (id) => {
 
 
 exports.patchArticleById = (id, votes) => {
-    console.log(votes)
     if(!votes) {
         return Promise.reject({
                 status: 400,
