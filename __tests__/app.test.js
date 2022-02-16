@@ -40,7 +40,7 @@ describe("/api/topics", () => {
 describe("/api/articles/:article_id", () => {
 	describe("GET", () => {
         test(`status: 200 returns an article object, which should have the following properties:
-            authors (which is the username for the users table), title, article_id, body, topic, created_at, votes`, () => {
+            authors (which is the username for the users table), title, article_id, body, topic, created_at, votes, comment_count`, () => {
             return request(app)
             .get("/api/articles/1")
             .expect(200)
@@ -52,7 +52,8 @@ describe("/api/articles/:article_id", () => {
                             body: 'I find this existence challenging',
                             topic: 'mitch',
                             created_at: '2020-07-09T20:11:00.000Z',
-                            votes: 100
+                            votes: 100,
+                            comment_count: 11
 						})
             });
         });
@@ -195,6 +196,38 @@ describe('/api/articles', () => {
                     );
 				});
 	        });
+        })
+    })
+})
+
+describe("/api/articles/:article_id/comments", () => {
+    describe("GET", () => {
+        test("Status 200: returns all comments for the given article_id which include all properties from comments table without the article_id", () => {
+            return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({body: {comments}}) => {
+                expect(comments).toHaveLength(11)
+                comments.forEach(comment => {
+                    expect(comment).toEqual(
+                        expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String)
+						})
+                    );
+				});
+	        });
+        })
+        test("Status 400: returns article not found when the wrong article_id is used", () => {
+            return request(app)
+            .get("/api/articles/50/comments")
+            .expect(404)
+            .then(response => {
+                expect(response.body.msg).toBe('No comments found for article_id: 50')
+            })
         })
     })
 })

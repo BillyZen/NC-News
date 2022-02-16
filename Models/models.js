@@ -8,7 +8,13 @@ exports.selectTopics = () => {
 }
 
 exports.selectArticle = (id) => {
-    return db.query('SELECT * FROM articles WHERE article_id = $1;', [id])
+
+    return db.query(`SELECT articles.*,
+    COUNT(comments.comment_id)::int AS comment_count
+    FROM articles
+    LEFT JOIN comments ON comments.article_id = articles.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id;`, [id])
     .then(({rows}) => {
         const article = rows[0]
         if(!article) {
@@ -64,6 +70,20 @@ exports.selectUsers = () => {
 exports.selectArticles = () => {
     return db.query('SELECT * FROM articles ORDER BY created_at DESC;')
     .then(({rows}) => {
+        return rows
+    })
+}
+
+
+exports.selectCommentsByArticle = (id) => {
+    return db.query("SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1", [id])
+    .then(({rows}) => {
+        if(!rows[0]) {
+            return Promise.reject({
+                status: 404,
+                msg : `No comments found for article_id: ${id}`
+            })
+        }
         return rows
     })
 }
