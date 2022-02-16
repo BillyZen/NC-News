@@ -9,13 +9,12 @@ exports.selectTopics = () => {
 
 exports.selectArticle = (id) => {
 
-    return db.query('SELECT * FROM comments WHERE article_id = $1;', [id])
-    .then(({rows}) => {
-        const commentCount = rows.length
-            db.query("ALTER TABLE articles ADD comment_count INT DEFAULT 0;")
-            db.query("UPDATE articles SET comment_count = $1 WHERE article_id = $2;", [commentCount, id])
-            return db.query("SELECT * FROM articles WHERE article_id = $1;", [id])
-    })
+    return db.query(`SELECT articles.*,
+    COUNT(comments.comment_id)::int AS comment_count
+    FROM articles
+    LEFT JOIN comments ON comments.article_id = articles.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id;`, [id])
     .then(({rows}) => {
         const article = rows[0]
         if(!article) {
