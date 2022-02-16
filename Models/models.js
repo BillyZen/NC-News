@@ -92,3 +92,20 @@ exports.selectCommentsByArticle = (id) => {
         return rows
     })
 }
+
+
+exports.createCommentByArticle = (id, userComment) => {
+    const username = userComment.username
+    const comment = userComment.body
+    if(!username || !comment) {
+        return Promise.reject({
+                status: 400,
+                msg : `This comment has not been formatted correctly`
+            })
+    }
+    return db.query("INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;", [username, comment, id])
+    .then(({rows}) => {
+        console.log(rows)
+        return rows[0]
+    })
+}
