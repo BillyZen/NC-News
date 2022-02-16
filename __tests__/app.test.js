@@ -199,3 +199,35 @@ describe('/api/articles', () => {
         })
     })
 })
+
+describe("/api/articles/:article_id/comments", () => {
+    describe("GET", () => {
+        test("Status 200: returns all comments for the given article_id which include all properties from comments table without the article_id", () => {
+            return request(app)
+            .get("/api/articles/1/comments")
+            .expect(200)
+            .then(({body: {comments}}) => {
+                expect(comments).toHaveLength(11)
+                comments.forEach(comment => {
+                    expect(comment).toEqual(
+                        expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String)
+						})
+                    );
+				});
+	        });
+        })
+        test("Status 400: returns article not found when the wrong article_id is used", () => {
+            return request(app)
+            .get("/api/articles/50/comments")
+            .expect(404)
+            .then(response => {
+                expect(response.body.msg).toBe('No comments found for article_id: 50')
+            })
+        })
+    })
+})

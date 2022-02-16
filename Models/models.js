@@ -73,3 +73,17 @@ exports.selectArticles = () => {
         return rows
     })
 }
+
+
+exports.selectCommentsByArticle = (id) => {
+    return db.query("SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1", [id])
+    .then(({rows}) => {
+        if(!rows[0]) {
+            return Promise.reject({
+                status: 404,
+                msg : `No comments found for article_id: ${id}`
+            })
+        }
+        return rows
+    })
+}
