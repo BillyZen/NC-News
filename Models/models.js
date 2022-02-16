@@ -8,7 +8,15 @@ exports.selectTopics = () => {
 }
 
 exports.selectArticle = (id) => {
-    return db.query('SELECT * FROM articles WHERE article_id = $1;', [id])
+
+    return db.query('SELECT * FROM comments WHERE article_id = $1;', [id])
+    .then(({rows}) => {
+        const commentCount = rows.length
+        const articleId = id
+            db.query("ALTER TABLE articles ADD comment_count INT DEFAULT 0;")
+            db.query("UPDATE articles SET comment_count = $1 WHERE article_id = $2;", [commentCount, articleId])
+            return db.query("SELECT * FROM articles WHERE article_id = $1;", [articleId])
+    })
     .then(({rows}) => {
         const article = rows[0]
         if(!article) {
