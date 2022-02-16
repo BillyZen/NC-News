@@ -105,7 +105,6 @@ exports.createCommentByArticle = (id, userComment) => {
     }
     return db.query("INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;", [username, comment, id])
     .then(({rows}) => {
-        console.log(rows)
         return rows[0]
     })
 }
