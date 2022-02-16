@@ -175,7 +175,7 @@ describe('/api/users', () => {
     })
 })
 
-describe('/api/articles', () => {
+describe.only('/api/articles', () => {
     describe('GET', () => {
         test('Status 200: returns all articles in order of created_at data in descending order', () => {
             return request(app)
@@ -191,7 +191,8 @@ describe('/api/articles', () => {
                             article_id: expect.any(Number),
                             topic: expect.any(String),
                             created_at: expect.any(String),
-                            votes: expect.any(Number)
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number)
 						})
                     );
 				});
