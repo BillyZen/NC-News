@@ -175,7 +175,7 @@ describe('/api/users', () => {
     })
 })
 
-describe.only('/api/articles', () => {
+describe('/api/articles', () => {
     describe('GET', () => {
         test('Status 200: returns all articles in order of created_at data in descending order', () => {
             return request(app)
@@ -228,6 +228,58 @@ describe("/api/articles/:article_id/comments", () => {
             .expect(404)
             .then(response => {
                 expect(response.body.msg).toBe('No comments found for article_id: 50')
+            })
+        })
+    })
+    describe("POST", () => {
+        test("Status 200: responds with the comment body and adds to the comment count of the article", () => {
+            const commentBody = { 
+                    username : "icellusedkars",
+                    body : "this comment is really necessary"
+                }
+
+            return request(app)
+            .post("/api/articles/1/comments")
+            .send(commentBody)
+            .expect(200)
+            .then(response => {
+                expect(response.body.comment).toEqual(
+                    expect.objectContaining({
+                        comment_id: expect.any(Number),
+                        votes: 0,
+                        created_at: expect.any(String),
+                        author: "icellusedkars",
+                        body: "this comment is really necessary"
+                    })     
+                )
+            })
+        })
+        test("Status 400: responds with bad comment format when the comment body is not correctly formatted", () => {
+            const commentBody = { 
+                    user : "icellusedkars",
+                    comment : "this comment is really necessary"
+                }
+
+            return request(app)
+            .post("/api/articles/1/comments")
+            .send(commentBody)
+            .expect(400)
+            .then(response => {
+                expect(response.body.msg).toBe("This comment has not been formatted correctly")
+            })
+        })
+        test("Status 400: responds with user does not exist when a username is used that isn't registered in the tables", () => {
+            const commentBody = { 
+                    username : "billyjoe",
+                    body : "this comment is really necessary"
+                }
+
+            return request(app)
+            .post("/api/articles/1/comments")
+            .send(commentBody)
+            .expect(400)
+            .then(response => {
+                expect(response.body.msg).toBe("Username does not exist, comment rejected")
             })
         })
     })
