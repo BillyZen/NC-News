@@ -8,6 +8,24 @@ beforeEach(() => seed(testData))
 
 afterAll(() => db.end());
 
+
+describe("/api", () => {
+    describe("GET", () => {
+        test("status 200 : returns a JSON list of available endpoints and brief explanations of them", () => {
+            return request(app)
+            .get("/api")
+            .expect(200)
+            .then(({body: {endpoints}}) => {
+                expect(Object.keys(endpoints)).toHaveLength(9)
+                Object.values(endpoints).forEach(endpoint => {
+                    expect(typeof endpoint).toBe('object')
+                    expect(Array.isArray(endpoint)).toBe(false)
+                })
+	        });
+        });
+    })
+})
+
 describe("/api/topics", () => {
 	describe("GET", () => {
 		test("status: 200 returns an array of topic objects, which have the properties slug and description.", () => {
