@@ -354,3 +354,24 @@ describe("/api/articles/:article_id/comments", () => {
         })
     })
 })
+
+describe("/api/comments/:comment_id", () => {
+    describe("DELETE", () => {
+        test("Status 204: returns no content and deletes the comment with the specified id", () => {
+            return request(app)
+            .delete("/api/comments/1")
+            .expect(204)
+            .then(({body}) => {
+                expect(body).toEqual({})
+            })
+        })
+        test("Status 400: returns error when comment does not already exist", () => {
+            return request(app)
+            .delete("/api/comments/100")
+            .expect(400)
+            .then(({body}) => {
+                expect(body.msg).toBe('Comment does not exist and cannot be deleted')
+            })
+        })
+    })
+})
