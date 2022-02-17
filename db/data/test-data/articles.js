@@ -1,7 +1,7 @@
 module.exports = [
   {
     title: "Living in the shadow of a great man",
-    topic: "mitch",
+    topic: "cats",
     author: "butter_bridge",
     body: "I find this existence challenging",
     created_at: 1594329060000,
@@ -25,7 +25,7 @@ module.exports = [
   },
   {
     title: "Student SUES Mitch!",
-    topic: "mitch",
+    topic: "cats",
     author: "rogersop",
     body: "We all love Mitch and his wonderful, unique typing style. However, the volume of his typing has ALLEGEDLY burst another students eardrums, and they are now suing for damages",
     created_at: 1588731240000,
@@ -49,7 +49,7 @@ module.exports = [
   },
   {
     title: "Z",
-    topic: "mitch",
+    topic: "cats",
     author: "icellusedkars",
     body: "I was hungry.",
     created_at: 1578406080000,

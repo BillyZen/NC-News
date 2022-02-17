@@ -50,7 +50,7 @@ describe("/api/articles/:article_id", () => {
                             title: 'Living in the shadow of a great man',
                             article_id: 1,
                             body: 'I find this existence challenging',
-                            topic: 'mitch',
+                            topic: 'cats',
                             created_at: '2020-07-09T20:11:00.000Z',
                             votes: 100,
                             comment_count: 11
@@ -81,7 +81,7 @@ describe("/api/articles/:article_id", () => {
             const articleToUpdate = {
                     article_id: 1,
                     title: "Living in the shadow of a great man",
-                    topic: "mitch",
+                    topic: "cats",
                     author: "butter_bridge",
                     body: "I find this existence challenging",
                     created_at: '2020-07-09T20:11:00.000Z'
@@ -103,7 +103,7 @@ describe("/api/articles/:article_id", () => {
             const articleToUpdate = {
                     article_id: 1,
                     title: "Living in the shadow of a great man",
-                    topic: "mitch",
+                    topic: "cats",
                     author: "butter_bridge",
                     body: "I find this existence challenging",
                     created_at: '2020-07-09T20:11:00.000Z'
@@ -197,6 +197,76 @@ describe('/api/articles', () => {
                     );
 				});
 	        });
+        })
+        test("Status 200: returns all articles by default order by date in descending order when no query is present", () => {
+            return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles).toBeSortedBy("created_at", {descending:true})
+                articles.forEach(article => {
+                    expect(article).toEqual(
+                        expect.objectContaining({
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            article_id: expect.any(Number),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            comment_count: expect.any(Number)
+						})
+                    );
+				});
+	        });
+        })
+        test("Status 200: returns all articles sorted by author in descending order", () => {
+            return request(app)
+            .get("/api/articles?sort_by=author")
+            .expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles).toBeSortedBy("author", {descending:true})
+	        });
+        })
+        test("Status 200: returns all articles sorted by author in ascending order by topic of cats", () => {
+            return request(app)
+            .get("/api/articles?sort_by=author&order=asc&topic=cats")
+            .expect(200)
+            .then(({body: {articles}}) => {
+                expect(articles).toHaveLength(4)
+                expect(articles).toBeSortedBy("author", {ascending:true})
+	        });
+        })
+        test("Status 400: returns invalid sort query when an invalid column table is added to query", () => {
+            return request(app)
+            .get("/api/articles?sort_by=biggiesmalls&order=asc&topic=cats")
+            .expect(400)
+            .then(response => {
+                expect(response.body.msg).toBe('Invalid sort query')
+            })
+        })
+        test("Status 400: returns invalid order query when asc or desc are not used", () => {
+            return request(app)
+            .get("/api/articles?sort_by=author&order=whatever&topic=cats")
+            .expect(400)
+            .then(response => {
+                expect(response.body.msg).toBe('Invalid order query')
+            })
+        })
+        test("Status 400: returns invalid topic query when a topic does not exist", () => {
+            return request(app)
+            .get("/api/articles?sort_by=author&order=asc&topic=biggiesmalls")
+            .expect(400)
+            .then(response => {
+                expect(response.body.msg).toBe('Topic does not exist')
+            })
+        })
+        test("Status 400: returns incorrect format when a query key is mispelled/not valid", () => {
+            return request(app)
+            .get("/api/articles?sord_by=author&order=asc&topic=biggiesmalls")
+            .expect(400)
+            .then(response => {
+                expect(response.body.msg).toBe('Query is using incorrect format')
+            })
         })
     })
 })
