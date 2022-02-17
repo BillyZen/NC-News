@@ -112,21 +112,6 @@ exports.selectArticles = (query) => {
 }
 
 
-
-// if (!['title', 'topic', 'author', 'created_at', 'votes'].includes(sort_by)) {
-//   return Promise.reject({ status: 400, msg: 'Invalid sort query' });
-// }
-
-// if (!['asc', 'desc'].includes(order)) {
-//   return Promise.reject({ status: 400, msg: 'Invalid order query' });
-// }
-
-// const queryStr = `
-//   SELECT *
-//   FROM table
-//   ORDER BY ${sort_by} ${order};`;
-
-
 exports.selectCommentsByArticle = (id) => {
     return db.query("SELECT comment_id, votes, created_at, author, body FROM comments WHERE article_id = $1", [id])
     .then(({rows}) => {
