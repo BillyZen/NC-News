@@ -67,17 +67,64 @@ exports.selectUsers = () => {
 }
 
 
-exports.selectArticles = () => {
-    return db.query(`
-    SELECT articles.*,
-    COUNT(comments.comment_id)::int AS comment_count
-    FROM articles
-    LEFT JOIN comments ON comments.article_id = articles.article_id
-    GROUP BY articles.article_id;`)
+exports.selectArticles = (query) => {
+
+    const validKeys = ["topic", "order", "sort_by"]
+
+    for (key in query) {
+        if (validKeys.includes(key) !== true) {
+            return Promise.reject({ status: 400, msg: 'Query is using incorrect format' });
+        }
+    }
+
+    const queryValues = []
+    const sort_by = query.sort_by || "created_at"
+    const order = query.order || "DESC"
+
+    if (!['title', 'topic', 'author', 'created_at', 'votes'].includes(sort_by)) {
+        return Promise.reject({ status: 400, msg: 'Invalid sort query' });
+    }
+    if (!['asc', 'DESC'].includes(order)) {
+        return Promise.reject({ status: 400, msg: 'Invalid order query' });
+    }
+
+    let queryStr = `
+    SELECT articles.article_id, articles.author, articles.created_at, articles.title, articles.votes, articles.topic,
+    COUNT(comments.comment_id)::int AS comment_count FROM articles
+    LEFT JOIN comments ON comments.article_id = articles.article_id`;
+
+
+    if(query.topic){
+        if(query.topic === 'mitch' || query.topic === 'cats' || query.topic === 'paper') {
+            queryValues.push(query.topic)
+            queryStr += ` WHERE topic = $1`
+        } else {
+            return Promise.reject({ status: 400, msg: 'Topic does not exist' });
+        }
+    }
+
+    queryStr += ` GROUP BY articles.article_id ORDER BY ${sort_by} ${order};`
+
+    return db.query(queryStr, queryValues)
     .then(({rows}) => {
         return rows
     })
 }
+
+
+
+// if (!['title', 'topic', 'author', 'created_at', 'votes'].includes(sort_by)) {
+//   return Promise.reject({ status: 400, msg: 'Invalid sort query' });
+// }
+
+// if (!['asc', 'desc'].includes(order)) {
+//   return Promise.reject({ status: 400, msg: 'Invalid order query' });
+// }
+
+// const queryStr = `
+//   SELECT *
+//   FROM table
+//   ORDER BY ${sort_by} ${order};`;
 
 
 exports.selectCommentsByArticle = (id) => {
