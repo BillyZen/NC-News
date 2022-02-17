@@ -1,4 +1,15 @@
-const {selectTopics, selectArticle, patchArticleById, selectUsers, selectArticles, selectCommentsByArticle, createCommentByArticle, removeCommentById} = require('../Models/models.js')
+const {readEndpointsFile, selectTopics, selectArticle, patchArticleById, selectUsers, selectArticles, selectCommentsByArticle, createCommentByArticle, removeCommentById} = require('../Models/models.js')
+
+exports.getApiList = (req,res,next) => {
+    readEndpointsFile()
+    .then(fileData => {
+        res.status(200).send({endpoints : fileData})
+    })
+    .catch(err => {
+        next(err)
+    })
+}
+
 
 exports.getTopics = (req, res, next) => {
     selectTopics()

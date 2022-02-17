@@ -1,4 +1,13 @@
 const db = require('../db/connection')
+const {readFile} = require("fs/promises")
+
+exports.readEndpointsFile = () => {
+    return readFile("./endpoints.json", "utf-8")
+    .then(fileContents => {
+        const endpoints = JSON.parse(fileContents)
+        return endpoints
+    })
+}
 
 exports.selectTopics = () => {
     return db.query('SELECT * FROM topics;')
