@@ -140,3 +140,17 @@ exports.createCommentByArticle = (id, userComment) => {
         return rows[0]
     })
 }
+
+
+exports.removeCommentById = id => {
+    return db.query('DELETE FROM comments WHERE comment_id = $1 RETURNING *;', [id])
+    .then(({rows}) => {
+        if(rows[0]) return rows
+        else {
+            return Promise.reject({
+                status: 400,
+                msg : `Comment does not exist and cannot be deleted`
+            })
+        }
+    })
+}
