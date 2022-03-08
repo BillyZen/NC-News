@@ -102,9 +102,10 @@ exports.selectArticles = (query) => {
     COUNT(comments.comment_id)::int AS comment_count FROM articles
     LEFT JOIN comments ON comments.article_id = articles.article_id`;
 
-
+    const topicArr = ['coding', 'cooking', 'football', 'cats', 'mitch', 'paper']
+    
     if(query.topic){
-        if(query.topic === 'mitch' || query.topic === 'cats' || query.topic === 'paper') {
+        if(topicArr.includes(query.topic)) {
             queryValues.push(query.topic)
             queryStr += ` WHERE topic = $1`
         } else {
