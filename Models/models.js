@@ -90,7 +90,7 @@ exports.selectArticles = (query) => {
     const sort_by = query.sort_by || "created_at"
     const order = query.order || "DESC"
 
-    if (!['title', 'topic', 'author', 'created_at', 'votes'].includes(sort_by)) {
+    if (!['title', 'topic', 'author', 'created_at', 'votes', 'comment_count'].includes(sort_by)) {
         return Promise.reject({ status: 400, msg: 'Invalid sort query' });
     }
     if (!['asc', 'DESC'].includes(order)) {
